@@ -6,7 +6,7 @@ I selected a straightforward microservices web application that prompts users to
 * The Worker app, built on __.NET__, retrieves the saved results from Redis and stores them in a __Postgres__ database.
 * The Result app interface, developed in __Node.js__, retrieves all results from the Postgres database, performs percentage-based comparisons, and presents the results.
 
-![Components](https://github.com/AhmedElSheriff/Voting-App-Kubernetes/master/architecture.excalidraw.png)
+![Components](https://github.com/AhmedElSheriff/Voting-App-Kubernetes/blob/master/architecture.excalidraw.png)
 
 ## Implementation
 To establish the network environment on AWS, I employed CloudFormation for provisioning and the eksctl tool to create the EKS cluster. Additionally, I deployed two worker nodes on private subnets.
@@ -21,4 +21,4 @@ For efficient management, I organized the application deployment files into the 
 * externadns-with-rbac.yml: Comprises the required resources to enable the cluster to use my custom domain hosted on Route 53.
 
 ## AWS Infrastructure Diagram
-![Infrastructure Diagram](https://github.com/AhmedElSheriff/Voting-App-Kubernetes/master/diagram.png)
+![Infrastructure Diagram](https://github.com/AhmedElSheriff/Voting-App-Kubernetes/blob/master/diagram.png)
