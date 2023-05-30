@@ -1,0 +1,98 @@
+# DB Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secrets
+data:
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
+---
+# DB Configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  POSTGRES_DB: db
+---
+# Volume and Volume Claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: ""
+  hostPath:
+    path: "/local/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: db
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+  labels:
+    name: postgres-pod
+    app: demo-voting-app
+spec:
+  containers:
+  - name: postgres
+    image: postgres:9.4
+    resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+    # env:
+    # - name: POSTGRES_USER
+    #   value: "postgres"
+    # - name:  POSTGRES_PASSWORD
+    #   value: "postgres"
+    # - name: POSTGRES_HOST_AUTH_METHOD
+    #   value: trust
+    envFrom:
+    - secretRef:
+        name: db-secrets
+    - configMapRef:
+        name: db-configmap
+    ports:
+     - containerPort: 5432
+    volumeMounts:
+    - name: db-storage
+      mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: db-storage
+    persistentVolumeClaim:
+      claimName: postgres-pv-claim
+---  
+# Cluster IP Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    name: db-service
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+     name: postgres-pod
+---

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: result-app
+  labels:
+    name: result-app
+spec:
+  containers:
+  - name: result-app-container
+    # image: ahmedlsheriff/result-app
+    image: dockersamples/examplevotingapp_result
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+---
+# Result App Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-app-service
+spec:
+  selector:
+    name: result-app
+  ports:
+  - port: 80
